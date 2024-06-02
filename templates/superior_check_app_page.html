@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %} Список заявлений {% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
+<style>
+
+</style>
+{% endblock %}
+{% block content %}
+{% for app in app_list %}
+<form>
+    <input type="email" name="user_email" placeholder="Электронная почта" value="{{app[1]}}" disabled>
+    <input type="text" name="user_name" placeholder="Имя пользователя" value="{{app[2]}}" disabled>
+    <input type="text" name="user_last_name" placeholder="Фамилия пользователя" value="{{app[3]}}" disabled>
+    <input type="text" name="user_city" placeholder="Город" value="{{app[4]}}" disabled>
+    <textarea type="textarea" name="user_message" placeholder="Не указано" rows="4" maxlength="256" disabled>{{app[5]}}</textarea>
+    <input type="date" name="date_creation" value="{{app[6]}}" disabled>
+    <a href="/superior/confirm_app/{{app[0]}}">Одобрить</a>
+</form>
+{% endfor %}
+{% endblock %}

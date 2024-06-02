@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %} Профиль {% endblock %}
+{% block style %} 
+<link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
+<style>    
+    .profile_div {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .main_div {
+        width: 400px;
+        margin: 20px;
+        background-color: #333;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(255, 255, 255, 0.2);
+    }
+</style>
+{% endblock %}
+{% block content %} 
+<div class="profile_div">
+    <div class="main_div">
+        <h1>{{profile.user_last_name}}</h1>
+        <h1>{{profile.user_name}}</h1>
+        <h1>{{profile.user_father_name}}</h1>
+        <hr>
+        <h2>Верифицированные часы: {{profile.user_verificated_hours}}</h2>
+        <h2>Добрые дела: {{profile.user_good_actions}}</h2>
+        <h2>Волонтёрские жетоны: {{profile.user_v_coins}}</h2>
+
+    </div>
+    <div class="info_div">
+        <form action="{{url_for('profile_page')}}" method="post">
+            <label for="user_email">Электронная почта</label>
+            <input type="text" name="user_email" value="{{profile.user_email}}" disabled required>
+            <label for="status">Должность</label>
+            <a href="/app" class="button doc_btn">Подать заявку</a>
+            <input type="text" name="status" value="{{profile.status}}" disabled required>
+            <label for="user_last_name">Фамилия пользователя</label>
+            <input type="text" name="user_last_name" value="{{profile.user_last_name}}" placeholder="Не указано" required>
+            <label for="user_name">Имя пользователя</label>
+            <input type="text" name="user_name" value="{{profile.user_name}}" placeholder="Не указано" required>
+            <label for="user_father_name">Отчество пользователя</label>
+            <input type="text" name="user_father_name" value="{{profile.user_father_name}}" placeholder="Не указано" required>
+            <label for="user_city">Город</label>
+            <input type="text" name="user_city" value="{{profile.user_city}}" placeholder="Не указано" required>
+            <label for="user_address">Адрес</label>
+            <input type="text" name="user_addres" value="{{profile.user_addres}}" placeholder="Не указано" required>
+            <label for="user_phone">Телефон</label>
+            <input type="text" name="user_phone" value="{{profile.user_phone}}" placeholder="7-???-???-??-??" required>
+            <label for="user_org">Организация</label>
+            <a href="/org" class="button doc_btn">Выбрать организацию</a>
+            <input type="text" name="user_org" value="{{profile.user_org}}" placeholder="Отсутсвует" disabled required>
+            <label for="user_tags">Теги</label>
+            <input type="text" name="user_tags" value="{{profile.user_tags}}" required>
+            <label for="user_birthdate">Дата рождения</label>
+            <input type="date" name="user_birthdate" value="{{profile.user_birthdate}}" required>
+            <label for="date_creation">Дата создания</label>
+            <input type="date" name="date_creation" value="{{profile.date_creation}}" disabled required>
+            <input type="submit" value="Сохранить">
+            <hr>
+            <btn>
+                <a href="/logout" class="button danger_btn">Выход</a>
+                <a href="/delete" class="button danger_btn">Удалить аккаунт</a>
+            </btn>
+        </form>
+    </div>
+</div>
+{% endblock %}

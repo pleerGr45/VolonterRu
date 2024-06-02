@@ -31,22 +31,45 @@ Base = declarative_base()
 class Auth(Base):
     __tablename__ = 'authorized_users'
     id = Column(Integer, primary_key=True)
-    login = Column(String(32), nullable=False, unique=True)
     password = Column(String(32), nullable=False)
     user_name = Column(String(32), nullable=False)
-    user_last_name = Column(String(32), nullable=True)
-    user_city = Column(String(32), nullable=True)
-    user_tags = Column(String, nullable=True)
+    user_last_name = Column(String(32), nullable=False)
+    user_father_name = Column(String(32), nullable=True, default="")
+    user_city = Column(String(32), nullable=True, default="")
+    user_address = Column(String, nullable=True, default="")
+    user_tags = Column(String, nullable=True, default="")
     user_birthdate = Column(String)
     date_creation = Column(String)
-    user_phone = Column(String)
-    user_email = Column(String)
+    user_phone = Column(String, nullable=True)
+    user_email = Column(String, nullable=False)
     user_org = Column(String(32), nullable=True)
     status = Column(String, default="Волонтёр")
     admin_access = Column(Boolean, default=False)
+    org_access_UUID = Column(Integer, default=False)
     user_verificated_hours = Column(Integer, default=0)
     user_good_actions = Column(Integer, default=0)
     user_v_coins = Column(Integer, default=0)
+
+# Создание модели ORG
+class Org(Base):
+    __tablename__ = 'organizations'
+    id = Column(Integer, primary_key=True)
+    org_name = Column(String(32), nullable=False, unique=True)
+    org_description = Column(String, nullable=True)
+    org_address = Column(String, nullable=False)
+    org_city = Column(String, nullable=False)
+    org_phone = Column(String, nullable=False)
+    org_email = Column(String, nullable=False)
+    org_owner = Column(String(32), nullable=False)
+    org_users = Column(String, nullable=False, default='')
+    posts = Column(String, nullable=False, default='')
+
+class App(Base):
+    __tablename__ = 'app'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, nullable=False, unique=True)
+    user_message = Column(String, nullable=True)
+    date_create = Column(String, nullable=False)
 
 # Создание базы данных
 Base.metadata.create_all(engine)
@@ -81,6 +104,9 @@ class UserLogin():
 def load_user(user_id):
     return UserLogin().fromDB(user_id)
 
+session.query(Auth).filter_by(id=1).update({Auth.admin_access: True})
+session.commit()
+
 #######################################################################################
 #                        ___    ___           ___         _____                       #
 #               |\  /|  |___|  |___|  |   |  |___|  \  /    |    |    |               #
@@ -94,44 +120,301 @@ def load_user(user_id):
 def home_page():
     return render_template("home_page.html")
 
+# ------------ Обработка пути '/login' ------------ 
 @app.route("/login", methods=['GET', 'POST'])
 def login_page():
+    # Если пользователь уже авторизован
+    if current_user.is_authenticated:
+        # Перенаправление на /profile
+        return redirect(url_for('profile_page'))
+    
+    # Если POST запрос
+    if request.method == 'POST':
+        # Получение получение пользователя по логину
+        user = session.query(Auth).filter_by(user_email=request.form['email']).first()
+
+        # Проверка на существование пользователя, на сходство паролей
+        if user and check_password_hash(user.password, request.form['pass']):
+            # Логининг пользователя
+            user_login = UserLogin().create(user)
+            login_user(user_login, remember=bool(request.form.get('remainme')))
+            # Отправка сообщения пользователю об успехе
+            flash('Произошёл успешный вход', 'success')
+            # Перенаправление на главную страницу /
+            return redirect(url_for('profile_page'))
+
+        # Отправка сообщения пользователю об ошибке
+        flash('Неверная пара логина и пароля', 'error')
+
+    # Возврат шаблона login_page.html
     return render_template("login_page.html")
 
+# ------------ Обработка пути '/register' ------------ 
 @app.route("/register", methods=['GET', 'POST'])
 def register_page():
     # Если POST запрос
     if request.method == 'POST':
 
         # Получение данных из формы
-        login = request.form['login']
         name = request.form['name']
+        last_name = request.form['last_name']
+        father_name = request.form['father_name']
+        email = request.form['email']
+        phone = request.form['phone']
+        city = request.form['city']
+        address = request.form['address']
         password = request.form['pass']
         password_repeat = request.form['pass_repeat']
 
-        # Проверка на соответствие введённых данных
-        if len(login) > 4 and len(login) <= 32 and len(name) > 4 and len(name) <= 32\
-                and len(password) > 5 and len(password) <= 32 and password == password_repeat:
-            # Проверка логина
-            if not check_login(login):
+        # Проверка почты
+        if not check_email(email): 
+            # Провекрка пароля
+            if password == password_repeat:
                 # Генерация скрытого пароля
                 pass_hash = generate_password_hash(password)
                 # Отправка в базу данных
                 datedb = datetime.now(pytz.timezone('Europe/Moscow'))
-                session.add(Auth(login=login, password=pass_hash, user_name=name, date_creation=date_format(datedb)))
+                session.add(Auth(
+                        password=pass_hash,
+                        user_name=name,
+                        user_last_name=last_name,
+                        user_father_name=father_name,
+                        user_phone=phone,
+                        user_email=email,
+                        user_city=city,
+                        user_address=address,
+                        date_creation=date_format(datedb)
+                    )
+                )
                 session.commit()
                 # Отправка сообщения пользователю об успехе
                 flash('Вы успешно зарегистрированы', 'success')
                 # Перевод пользователя в разел /login
                 return redirect(url_for('login_page'))
             else:
-                # Отправка сообщения пользователю о том, что логин уже занят
-                flash('Такой логин уже существует', 'warning')
+                # Отправка сообщения пользователю о том, что пароли не совпадают
+                flash('Пароли не совпадают', 'error')
         else:
-            # Отправка сообщения пользователю о том, что пароли не совпадают
-            flash('Пароли не совпадают', 'error')
+            # Отправка сообщения пользователю о том, что почта уже занята
+            flash('Аккаунт с такой электронной почтой уже существует', 'warning')
+
 
     # Возврат шаблона register_page.html
     return render_template("register_page.html")
+
+# ------------ Обработка пути '/org' ------------ 
+@app.route("/org", methods=['GET', 'POST'])
+@login_required
+def org_page():
+    return render_template("org_page.html")
+
+# ------------ Обработка пути '/org/create' ------------ 
+@app.route("/org/create", methods=['GET', 'POST'])
+@login_required
+def org_create_page():
+    user_metadata = session.query(Auth).filter_by(
+            id=current_user.get_id()).first()
+    
+    if user_metadata.status == 'Организатор':
+        if request.method == 'POST':
+            name = request.form['name']
+            address = request.form['address']
+            city = request.form['city']
+            phone = request.form['phone']
+            email = request.form['email']
+            description = request.form['description']
+
+            session.add(Org(
+                org_name=name,
+                org_address=address,
+                org_city=city,
+                org_phone=phone,
+                org_email=email,
+                org_description=description,
+                org_owner = user_metadata.id
+            ))
+
+            session.query(Org).filter_by(org_owner=user_metadata.id).first().org_users += user_metadata.id + ','
+
+            session.commit()
+
+            flash('Организация успешно создана', 'success')
+            return redirect(url_for('org_manage_page'))
+        return render_template("org_create_page.html")
+    else:
+        flash('Вы не являетесь организатором', 'error')
+        return redirect('/')
+
+# ------------ Обработка пути '/org/manage' ------------ 
+@app.route("/org/manage", methods=['GET', 'POST'])
+@login_required
+def org_manage_page():
+    user_metadata = session.query(Auth).filter_by(
+            id=current_user.get_id()).first()
+    if user_metadata.status == 'Организатор':
+
+        return render_template("org_manage_page.html")
+    else:
+        flash('Вы не являетесь организатором', 'error')
+        return redirect('/')
+
+# ------------ Обработка пути '/org/main' ------------ 
+@app.route("/org/main", methods=['GET', 'POST'])
+@login_required
+def org_main_page():
+    return render_template("org_main_page.html")
+
+# ------------ Обработка пути '/org/join' ------------ 
+@app.route("/org/join", methods=['GET', 'POST'])
+@login_required
+def org_join_page():
+    return render_template("org_join_page.html")
+
+# ------------ Обработка пути '/org/leave' ------------ 
+@app.route("/org/leave", methods=['GET', 'POST'])
+@login_required
+def org_leave_page():
+    return render_template("org_leave_page.html")
+
+# ------------ Обработка пути '/app' ------------ 
+@app.route("/app", methods=['GET', 'POST'])
+@login_required
+def app_page():
+    if request.method == 'POST':
+        user_metadata = session.query(Auth).filter_by(
+            id=current_user.get_id()).first()
+        
+        if not session.query(App).filter_by(user_id=user_metadata.id).first():
+            user_message = request.form['user_message']
+
+            session.add(App(
+                user_id=user_metadata.id,
+                user_message=user_message, 
+                date_create=date_format(datetime.now(pytz.timezone('Europe/Moscow')))
+            ))
+            session.commit()
+            flash('Заявление успешно отправлено', 'success')
+        else:
+            flash('Вы уже оставляли заявку', 'warning')
+        return redirect(url_for('profile_page'))
+    return render_template("app_page.html")
+
+# ------------ Обработка пути '/logout' ------------ 
+@app.route("/logout")
+@login_required
+def logout_page():
+    # Выход из системы
+    logout_user()
+    # Отправка сообщения пользователю об выходе из аккаунта
+    flash('Произошёл выход из аккаунта', 'info')
+    # Перенаправление на /login
+    return redirect(url_for('login_page'))
+
+# ------------ Обработка пути '/profile' ------------ 
+@app.route("/profile", methods=['GET', 'POST'])
+@login_required
+def profile_page():
+    # Получение данных о пользователе
+    user_metadata = session.query(Auth).filter_by(
+        id=current_user.get_id()).first()
+
+    # Если POST запрос
+    if request.method == 'POST':
+        # Получение данных с формы и перезапись в БД
+        user_metadata.user_name = request.form['user_name']
+        user_metadata.user_last_name = request.form['user_last_name']
+        user_metadata.user_father_name = request.form['user_father_name']
+        user_metadata.user_city = request.form['user_city']
+        user_metadata.user_address = request.form['user_address']
+        user_metadata.user_tags = request.form['user_tags']
+        user_metadata.user_email = request.form['user_email']
+        user_metadata.user_phone = request.form['user_phone']
+        user_metadata.user_birthdate = request.form['user_birthdate']
+        user_metadata.date_creation = request.form['date_creation']
+        user_metadata.status = request.form['status']
+        user_metadata.user_email = request.form['user_email']
+        session.commit()
+
+    # Возврат шаблона profile_page.html
+    return render_template("profile_page.html", profile=user_metadata)
+
+@app.route("/superior/check_app", methods=['GET', 'POST'])
+@login_required
+def superior_check_app_page():
+    # Получение данных о пользователе
+    user_metadata = session.query(Auth).filter_by(
+        id=current_user.get_id()).first()
+    
+    if user_metadata.admin_access:
+        apps = session.query(App).all()
+        app_list = []
+
+        for app in apps:
+            user = session.query(Auth).filter_by(id=app.user_id).first()
+            app_list.append([
+                app.id,
+                user.user_email,
+                user.user_name,
+                user.user_last_name,
+                user.user_city,
+                app.user_message,
+                app.date_create
+            ])
+
+        return render_template("superior_check_app_page.html", app_list = app_list)
+    
+    return abort(404) 
+
+@app.route("/superior/confirm_app/<app_id>", methods=['GET', 'POST'])
+@login_required
+def superior_confirm_app_page(app_id):
+    # Получение данных о пользователе
+    user_metadata = session.query(Auth).filter_by(
+        id=current_user.get_id()).first()
+    
+    if user_metadata.admin_access:
+        app_rights = session.query(App).filter_by(id=app_id).first()
+        
+        user = session.query(Auth).filter_by(id=app_rights.user_id).first()
+        user.status = 'Организатор'
+        
+        session.delete(app_rights)
+        
+        session.commit()
+
+        return redirect(url_for('superior_check_app_page'))
+    
+    return abort(404) 
+
+#######################################################################################
+#        ___     ___    ___        _____                                              #
+#       |   |   |   |  |   |      |__|__|  \  /  |   |  | /  |  |   |  /|  |  /|      #
+#       |___|   |   |  |   |         |      \/   |---|  |<   |__|   | / |  | / |      #
+#      |     |  |___|  |   |         |      /    |   |  | \      |  |/  |  |/  |      #
+#                                                                                     #
+#######################################################################################
+
+# Функция проверки существования логина
+def check_email(email: str) -> bool:
+    """
+    Функция check_email
+    Проверяет наличие данного логина в БД
+    Возвращает:
+      True - если в пользователь с такой почтой (user_email: str) уже существет.
+      False - если почта свободна
+    Пояснение:
+      Так как email у авторизованного пользователя уникален, нужна функция, которая проверяет уникальность почты
+    """
+    return True if session.query(Auth).filter_by(user_email=email).first() else False
+
+# Функция форматирования даты
+def date_format(date) -> str:
+    """
+    Метод date_format
+    Возвращает время в формате: гг-мм-дд
+    Добавляет ноль перед числом месяца или дня, если это число < 10
+    """
+    return "{}-{:02}-{:02}".format(date.year, date.month, date.day)
+
 
 app.run(debug=True)

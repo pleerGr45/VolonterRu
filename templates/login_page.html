@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %} главная {% endblock %}
+{% block title %} Вход {% endblock %}
 {% block style %}
 <link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
@@ -9,4 +9,15 @@
 </style>
 {% endblock %}
 {% block content %}
+<form action="/login" method="post">
+    <input type="email" name="email" placeholder="Электронная почта" required>
+    <input type="password" name="pass" placeholder="Пароль" pattern="^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+-={}\[\]?.,<>~`-]).{8,}$" title="Пароль должен содержать не менее 8 символов, хотя бы одну латинскую букву, цифру и специальный символ, кроме /, \, |" minlength="6" maxlength="32" required>
+    <div>
+        <input type="checkbox" name="remainme">
+        <label for="remainme">Запомнить меня</label> 
+    </div>
+    <input type="submit" value="Войти">
+    <hr>
+    <a href="/register">Зарегистрироваться</a>
+</form>
 {% endblock %}

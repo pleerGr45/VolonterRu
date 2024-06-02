@@ -1,0 +1,140 @@
+input[type="text"],
+input[type="password"],
+input[type="submit"],
+input[type="email"],
+input[type="tel"],
+input[type="date"] {
+  width: -webkit-fill-available;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  background-color: #444444;
+  color: #f5f5f5;
+  transition: 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+input[type="submit"]:focus {
+  outline: none;
+  box-shadow: 0 1px 3px rgba(255, 255, 255, 0.2);
+}
+
+input[type="file"] {
+  width: -webkit-fill-available;
+  padding: 10px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  color: #fff;
+}
+
+input[type="file"]::-webkit-file-name-label {
+  color: #ccc;
+}
+
+input[type="file"]::-ms-browse {
+  color: #ccc;
+}
+
+input[type="submit"] {
+  background-color: #337AB7;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+input[type="submit"]:focus,
+input[type="submit"]:hover {
+  background-color: #135186;
+}
+
+input:disabled {
+  background-color: #333;
+}
+
+btn {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.button {
+  color: #f5f5f5;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-right: 20px;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.create_btn {
+  padding: 3px;
+  background-color: #20ac2c;
+}
+.create_btn:hover,
+.create_btn:focus {
+  background-color: #197521;
+  text-decoration: none;
+}
+
+.danger_btn {
+  padding: 10px 15px;
+  background-color: #fc2847;
+}
+.danger_btn:hover,
+.danger_btn:focus {
+  background-color: #a7182d;
+  text-decoration: none;
+}
+
+.doc_btn {
+  padding: 3px;
+  background-color: #287dfc;
+}
+.doc_btn:hover,
+.doc_btn:focus {
+  background-color: #2167d1;
+  text-decoration: none;
+}
+
+a {
+  color: #337ab7;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+hr {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+label {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  text-shadow: none;
+  font-weight: 500;
+  font-size: 14px;
+  color: #f5f5f5;
+  text-decoration: none;
+}
+
+div {
+  margin-bottom: 7px
+}

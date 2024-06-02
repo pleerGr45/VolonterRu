@@ -1,0 +1,161 @@
+/* Main style */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #fff;
+  background-color: #1C1C1C;
+}
+
+form {
+  width: 400px;
+  margin: 20px auto;
+  background-color: #333;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.2);
+}
+
+a {
+  color: #fff;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 0 25px;
+}
+
+/* Header style */
+
+.header {
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 2px 5px #1C1C1C60;
+}
+
+.header .container {
+  background-color: #1c1c1cb3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header_nav {
+  display: flex;
+  justify-content: left;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header_list {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+li a {
+  color: #bbbbbb;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+li a:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Кнопки авторизации */
+.header_auth {
+  display: flex;
+  align-items: center;
+  margin-right: 6%;
+}
+
+.auth_btn {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.login_btn {
+  background-color: #337AB7;
+  width: 68px;
+  height: 22px;
+  border: none;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-style: bold;
+  margin: 5px;
+  transition: background-color 0.5s;
+}
+
+.register_btn {
+  background-color: #10C700;
+  width: 68px;
+  height: 22px;
+  border: none;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  color: #fff;
+  font-style: bold;
+  margin: 5px;
+  transition: background-color 0.5s;
+}
+
+.login_btn:hover {
+  text-decoration: none;
+  background-color: #12528a;
+}
+
+.register_btn:hover {
+  text-decoration: none;
+  background-color: #0c7e02;
+}
+
+/* Flash style*/
+
+.flash {
+  background-color: #333;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 3px;
+}
+
+.flash.success {  
+  border: 1px solid #3be961;
+  color: #3be961;
+}
+
+.flash.info {
+  border: 1px solid #4c3be9;
+  color: #4c3be9;
+}
+
+.flash.message {
+  border: 1px solid #5c3ada;
+  color: #5c3ada;
+}
+
+.flash.warning {
+  border: 1px solid #dabd3a;
+  color: #dabd3a;
+}
+
+.flash.error {
+  border: 1px solid #da3a3a;
+  color: #da3a3a;
+}

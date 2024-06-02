@@ -1,12 +1,48 @@
 {% extends "base.html" %}
-{% block title %} главная {% endblock %}
+{% block title %} Регистрация {% endblock %}
 {% block style %}
 <link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
 <style>
+    form {
+        width: 40%;
+    }
 
+    .reg_div_input_container {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .reg_div_box {
+        display: flex;
+        flex-direction: column;
+        width: -webkit-fill-available;
+        margin: 0 10px;
+    }
 </style>
 {% endblock %}
 {% block content %}
+<form action="/register" method="post">
+    <div class="reg_div_input_container">
+        <div class="reg_div_box">
+            <input type="text" name="name" placeholder="Имя*" minlength="5" maxlength="32" pattern="[а-яА-Я]*" title="Имя может содержать только латинские и русские буквы" required>
+            <input type="text" name="last_name" placeholder="Фамилия*" minlength="5" maxlength="32" pattern="[а-яА-Я]*" title="Фамилия может содержать только русские буквы">
+            <input type="text" name="father_name" placeholder="Отчество" minlength="5" maxlength="32" pattern="[а-яА-Я]*" title="Отчество может содержать только русские буквы">
+        </div>
+        <div class="reg_div_box">
+            <input type="email" name="email" placeholder="Электронная почта*" required>
+            <input type="tel" name="phone" placeholder="Номер телефона*" maxlength="32" required>
+            <input type="text" name="city" placeholder="Город" minlength="5" maxlength="32" required>
+        </div>
+        <div class="reg_div_box">
+            <input type="text" name="address" placeholder="Адрес" maxlength="32" required>
+            <input type="password" name="pass" placeholder="Пароль*" minlength="6" pattern="^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+-={}\[\]?.,~`-]).{8,}$" title="Пароль должен содержать не менее 8 символов, хотя бы одну латинскую букву, цифру и специальный символ, кроме /, \, |" maxlength="32" required>
+            <input type="password" name="pass_repeat" placeholder="Повторение пароля*" pattern="^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+-={}\[\]?.,~`-]).{8,}$" title="Пароль должен содержать не менее 8 символов, хотя бы одну латинскую букву, цифру и специальный символ, кроме /, \, |" minlength="6" maxlength="32" required>
+        </div>
+    </div>
+    <input type="submit" value="Регистрация">
+    <hr>
+    <a href="/login">Войти</a>
+</form>
 {% endblock %}

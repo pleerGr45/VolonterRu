@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %} Справка {% endblock %}
+{% block title %} заявка на организаторство {% endblock %}
 {% block style %}
 <link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
@@ -9,5 +9,8 @@
 </style>
 {% endblock %}
 {% block content %}
-
+<form action="{{url_for('app_page')}}" method="post">
+    <textarea type="textarea" name="user_message" placeholder="Не указано" rows="4" maxlength="256"></textarea>
+    <input type="submit" value="Отправить">
+</form>
 {% endblock %}
