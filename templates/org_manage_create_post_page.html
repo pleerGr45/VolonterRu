@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %} Создание события {% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
+<style>
+    textarea {
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<form action="{{url_for('org_manage_create_post_page')}}" method="post">
+    <input type="text" name="title" placeholder="Заголовок" required>
+    <input type="text" name="address" placeholder="Адрес" required>
+    <input type="text" name="city" placeholder="Город" required>
+    <input type="date" name="date" required>
+    <input type="text" name="verificated_time" placeholder="Верифицированные часы" required>
+    <input type="text" name="v_coins" placeholder="Волонтёрские жетоны" required>
+    <textarea type="textarea" name="description" placeholder="Описание" rows="4" maxlength="256"></textarea>
+    <input type="submit" value="Создать">
+</form>
+{% endblock %}

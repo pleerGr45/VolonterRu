@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %} Профиль {% endblock %}
+{% block title %} {{profile.user_name}} Профиль {% endblock %}
 {% block style %} 
 <link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
@@ -52,9 +52,6 @@
             <input type="text" name="user_addres" value="{{profile.user_addres}}" placeholder="Не указано" required>
             <label for="user_phone">Телефон</label>
             <input type="text" name="user_phone" value="{{profile.user_phone}}" placeholder="7-???-???-??-??" required>
-            <label for="user_org">Организация</label>
-            <a href="/org" class="button doc_btn">Выбрать организацию</a>
-            <input type="text" name="user_org" value="{{profile.user_org}}" placeholder="Отсутсвует" disabled required>
             <label for="user_tags">Теги</label>
             <input type="text" name="user_tags" value="{{profile.user_tags}}" required>
             <label for="user_birthdate">Дата рождения</label>

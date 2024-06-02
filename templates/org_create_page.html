@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %} Создать организацию {% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
+<style>
+    textarea {
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<form action="{{url_for('org_create_page')}}" method="post">
+    <input type="email" name="email" placeholder="Электронная почта" required>
+    <input type="text" name="name" placeholder="Имя организации" required>
+    <input type="text" name="address" placeholder="Адрес организации" required>
+    <input type="text" name="city" placeholder="Город организации" required>
+    <input type="tel" name="phone" placeholder="Номер телефона" required>
+    <textarea type="textarea" name="description" placeholder="Описание" rows="4" maxlength="256"></textarea>
+    <input type="submit" value="Создать">
+</form>
+{% endblock %}

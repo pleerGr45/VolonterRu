@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %} Обмен бонусов {% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
+<style>
+    .card_menu {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        margin: 20px;
+    }
+
+    .card {
+        margin: 0 20px;
+        width: -webkit-fill-available;
+        padding: 20px;
+        background-color: #333;
+        border-radius: 3px;
+        box-shadow: 0 2px 5px rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+
+</style>
+{% endblock %}
+{% block content %}
+<div class="card_menu">
+    <div class="card">
+        <h3>Случайный промокод</h3> - 40 бонусов
+    </div>
+    <div class="card">
+        <h3>Случайный промокод на технику</h3> - 80 бонусов
+    </div>
+    <div class="card">
+        <h3>Футболка волонтёра</h3> - 140 бонусов
+    </div>
+    <div class="card">
+        <h3>Выборочный промокод (более 700 руб)</h3> - 250 бонусов
+    </div>
+    <div class="card">
+        <h3>Случайный подарок</h3> - 500 бонусов
+    </div>
+    <div class="card">
+        <h3>Звание "Заслуженный волонтёр"</h3> - 900 бонусов
+    </div>
+    <div class="card">
+        <h3>Бесплатный курс</h3> (до 7 тыс.) - 1100 бонусов
+    </div>
+    <div class="card">
+        <h3>Путёвка в артек</h3> - 2500 бонусов
+    </div>
+    <div class="card">
+        <h3>Экскурсия на ядерный ледокол</h3> - 4800 бонусов
+    </div>
+</div>
+{% endblock %}

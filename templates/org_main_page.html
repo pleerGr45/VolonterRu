@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %} {{org.org_name}} {% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
+<style>
+    textarea {
+        margin-top: 10px;
+    }
+
+    .org_div {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
+        margin: 20px;
+    }
+
+    .post_div {
+        margin: 0 20px;
+        display: flex;
+        flex-direction: column;
+        height: 700px;
+        overflow-y: scroll;
+        scrollbar-color: #333 #444;
+    }
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="org_div">
+    <div class="main_div">
+        <form>
+            <h3>{{org.org_name}}</h3>
+            <p>{{org.org_description}}</p>
+            <h4>Город: {{org.org_city}}</h4>
+            <h4>Адрес: {{org.org_address}}</h4>
+            <h4>Телефон: {{org.org_phone}}</h4>
+            <h4>Почта: {{org.org_email}}</h4>
+        </form>
+    </div>
+    <div class="post_div">
+        {% for post in posts %}
+        <form>
+            <label for="title">Заголовок</label>
+            <input type="text" name="title" placeholder="Не указано" value="{{post[0]}}" disabled>
+            <label for="city">Город</label>
+            <input type="text" name="city" placeholder="Не указано" value="{{post[2]}}" disabled>
+            <label for="address">Адрес</label>
+            <input type="text" name="address" placeholder="Не указано" value="{{post[1]}}" disabled>
+            <label for="date">Дата</label>
+            <input type="date" name="date" value="{{post[3]}}" disabled>
+            <label for="verificated_time">Верифицированные часы</label>
+            <input type="text" name="verificated_time" value="{{post[4]}}" disabled>
+            <label for="v_coins">Волонтёрские жетоны</label>
+            <input type="text" name="v_coins" value="{{post[5]}}" disabled>
+            <label for="description">Описание</label>
+            <textarea type="textarea" name="description" placeholder="Описание" rows="4" maxlength="256" disabled>{{post[6]}}</textarea>
+        </form>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

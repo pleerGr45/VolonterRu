@@ -61,7 +61,6 @@ class Org(Base):
     org_phone = Column(String, nullable=False)
     org_email = Column(String, nullable=False)
     org_owner = Column(String(32), nullable=False)
-    org_users = Column(String, nullable=False, default='')
     posts = Column(String, nullable=False, default='')
 
 class App(Base):
@@ -206,7 +205,8 @@ def register_page():
 @app.route("/org", methods=['GET', 'POST'])
 @login_required
 def org_page():
-    return render_template("org_page.html")
+    orgs = session.query(Org).all()
+    return render_template("org_page.html", orgs=orgs)
 
 # ------------ Обработка пути '/org/create' ------------ 
 @app.route("/org/create", methods=['GET', 'POST'])
@@ -234,8 +234,6 @@ def org_create_page():
                 org_owner = user_metadata.id
             ))
 
-            session.query(Org).filter_by(org_owner=user_metadata.id).first().org_users += user_metadata.id + ','
-
             session.commit()
 
             flash('Организация успешно создана', 'success')
@@ -252,29 +250,129 @@ def org_manage_page():
     user_metadata = session.query(Auth).filter_by(
             id=current_user.get_id()).first()
     if user_metadata.status == 'Организатор':
+        org = session.query(Org).filter_by(org_owner=user_metadata.id).first()
+        if org:
+            if request.method == 'POST':
+                name = request.form['name']
+                address = request.form['address']
+                city = request.form['city']
+                phone = request.form['phone']
+                email = request.form['email']
+                description = request.form['description']
+                org.org_name = name
+                org.org_address = address
+                org.org_city = city
+                org.org_phone = phone
+                org.org_email = email
+                org.org_description = description
+                session.commit()
 
-        return render_template("org_manage_page.html")
+                flash('Организация успешно изменена', 'success')
+            
+            return render_template("org_manage_page.html", org=org, org_owner_email=user_metadata.user_email)
+        else:
+            flash('Вы не создали организацию', 'warning')
+            return redirect('/org/create')
     else:
         flash('Вы не являетесь организатором', 'error')
         return redirect('/')
 
-# ------------ Обработка пути '/org/main' ------------ 
-@app.route("/org/main", methods=['GET', 'POST'])
+# ------------ Обработка пути '/org/manage' ------------ 
+@app.route("/org/manage/create_post", methods=['GET', 'POST'])
 @login_required
-def org_main_page():
-    return render_template("org_main_page.html")
+def org_manage_create_post_page():
+    user_metadata = session.query(Auth).filter_by(
+            id=current_user.get_id()).first()
+    if user_metadata.status == 'Организатор':
+        org = session.query(Org).filter_by(org_owner=user_metadata.id).first()
+        if org:
+            if request.method == 'POST':
+                title = request.form['title']
+                address = request.form['address']
+                city = request.form['city']
+                date = request.form['date']
+                verificated_time = request.form['verificated_time']
+                v_coins = request.form['v_coins']
+                description = request.form['description']
 
-# ------------ Обработка пути '/org/join' ------------ 
-@app.route("/org/join", methods=['GET', 'POST'])
-@login_required
-def org_join_page():
-    return render_template("org_join_page.html")
+                org.posts += f'{title},{address},{city},{date},{verificated_time},{v_coins},{description}|'
 
-# ------------ Обработка пути '/org/leave' ------------ 
-@app.route("/org/leave", methods=['GET', 'POST'])
+                session.commit()
+
+                flash('Пост успешно создан', 'success')
+                return redirect(url_for('org_manage_page'))
+            
+            return render_template("org_manage_create_post_page.html", org=org, org_owner_email=user_metadata.user_email)
+        else:
+            flash('Вы не создали организацию', 'warning')
+            return redirect('/org/create')
+    else:
+        flash('Вы не являетесь организатором', 'error')
+        return redirect('/')
+
+@app.route("/org/manage/delete_post/<int:id>", methods=['GET', 'POST'])
 @login_required
-def org_leave_page():
-    return render_template("org_leave_page.html")
+def org_manage_delete_post_page(id: int):
+    user_metadata = session.query(Auth).filter_by(
+            id=current_user.get_id()).first()
+    if user_metadata.status == 'Организатор':
+        org = session.query(Org).filter_by(org_owner=user_metadata.id).first()
+        if org:
+            posts = org.posts
+            spl_posts = posts.split('|')
+            
+            org.posts = org.posts.replace(spl_posts[id]+'|', '')
+            session.commit()
+
+            return redirect(url_for('org_manage_page'))
+        else:
+            flash('Вы не создали организацию', 'warning')
+            return redirect('/org/create')
+    else:
+        flash('Вы не являетесь организатором', 'error')
+        return redirect('/')
+
+# ------------ Обработка пути '/org/delete' ------------ 
+@app.route("/org/delete", methods=['GET', 'POST'])
+@login_required
+def org_delete_page():
+    user_metadata = session.query(Auth).filter_by(
+        id=current_user.get_id()).first()
+    
+    if user_metadata.status == 'Организатор':
+        org = session.query(Org).filter_by(org_owner=user_metadata.id).first()
+        if org:
+            session.delete(org)
+            session.commit()
+            flash('Организация успешно удалена', 'success')
+        else:
+            flash('Вы не создали организацию', 'warning')
+            return redirect('/org/create')
+    else:
+        flash('Вы не являетесь организатором', 'error')
+
+    return redirect('/org')
+
+# ------------ Обработка пути '/org/main/<org_id>' ------------ 
+@app.route("/org/main/<org_id>", methods=['GET', 'POST'])
+@login_required
+def org_main_page(org_id):
+    org = session.query(Org).filter_by(id=org_id).first()
+
+    post_list = org.posts.split('|')
+    posts = []
+
+    for el in post_list:
+        if el:
+            posts.append(el.split(','))
+
+    return render_template("org_main_page.html", org=org, posts = posts)
+
+# ------------ Обработка пути '/bonus' ------------ 
+@app.route("/bonus")
+def bonus_page():
+    return render_template("bonus_page.html")
+
 
 # ------------ Обработка пути '/app' ------------ 
 @app.route("/app", methods=['GET', 'POST'])

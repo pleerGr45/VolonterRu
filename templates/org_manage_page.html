@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{org.org_name}} упарвление{% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
+<style>
+
+</style>
+{% endblock %}
+{% block content %}
+<form action="{{url_for('org_manage_page')}}" method="post">
+    <label for="owner">Организатор</label>
+    <input type="text" name="owner" placeholder="Владелец" value="{{org_owner_email}}" disabled>
+    <label for="email">Электронная почта</label>
+    <input type="email" name="email" placeholder="Не указано" value="{{org.org_email}}" required>
+    <label for="name">Название</label>
+    <input type="text" name="name" placeholder="Не указано" value="{{org.org_name}}" required>
+    <label for="address">Адрес</label>
+    <input type="text" name="address" placeholder="Не указано" value="{{org.org_address}}" required>
+    <label for="city">Город</label>
+    <input type="text" name="city" placeholder="Не указано" value="{{org.org_city}}" required>
+    <label for="phone">Телефон</label>
+    <input type="tel" name="phone" placeholder="Не указано" value="{{org.org_phone}}" required>
+    <label for="description">Описание</label>
+    <textarea type="textarea" name="description" placeholder="Не указано" rows="4" maxlength="256">{{org.org_description}}</textarea>
+    <input type="submit" value="Сохранить">
+    <hr>
+    <btn>
+        <a href="/org/delete" class="button danger_btn">Удалить организацию</a>
+    </btn>
+    <hr>
+    <a href="/org/manage/create_post">Создать событие</a>
+</form>
+{% endblock %}

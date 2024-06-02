@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %} Организации {% endblock %}
+{% block style %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
+<style>
+
+</style>
+{% endblock %}
+{% block content %}
+
+{% for org in orgs %}
+<form>
+    <a href="/org/main/{{org.id}}">{{org.org_name}}</a>
+    <p>{{org.org_description}}</p>
+</form>
+{% endfor %}
+
+{% endblock %}
