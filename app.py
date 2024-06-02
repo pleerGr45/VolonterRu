@@ -42,10 +42,8 @@ class Auth(Base):
     date_creation = Column(String)
     user_phone = Column(String, nullable=True)
     user_email = Column(String, nullable=False)
-    user_org = Column(String(32), nullable=True)
     status = Column(String, default="Волонтёр")
     admin_access = Column(Boolean, default=False)
-    org_access_UUID = Column(Integer, default=False)
     user_verificated_hours = Column(Integer, default=0)
     user_good_actions = Column(Integer, default=0)
     user_v_coins = Column(Integer, default=0)
@@ -377,7 +375,7 @@ def bonus_page():
 # ------------ Обработка пути '/app' ------------ 
 @app.route("/app", methods=['GET', 'POST'])
 @login_required
-def app_page():
+def app_page(): 
     if request.method == 'POST':
         user_metadata = session.query(Auth).filter_by(
             id=current_user.get_id()).first()

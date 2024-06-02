@@ -3,6 +3,7 @@
 {% block style %} 
 <link rel="stylesheet" href="{{url_for('static', filename='css/input_style.css')}}">
 <link rel="stylesheet" href="{{url_for('static', filename='css/text_area_style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/image.css')}}">
 <style>    
     .profile_div {
         display: flex;
@@ -64,6 +65,12 @@
                 <a href="/logout" class="button danger_btn">Выход</a>
                 <a href="/delete" class="button danger_btn">Удалить аккаунт</a>
             </btn>
+            {% if profile.status == 'Организатор' %}
+            <hr>
+            <a href="/org/create">Создать организацию</a>
+            <br>
+            <a href="/org/manage">Управлять организацией</a>
+            {% endif %}
         </form>
     </div>
 </div>
